@@ -27,7 +27,7 @@ set_target_properties(LLVMDemangle PROPERTIES
 add_library(LLVMSupport STATIC IMPORTED)
 
 set_target_properties(LLVMSupport PROPERTIES
-    INTERFACE_LINK_LIBRARIES_DEBUG "psapi;shell32;ole32;uuid;advapi32;LLVMDemangle"
+    INTERFACE_LINK_LIBRARIES "psapi;shell32;ole32;uuid;advapi32;LLVMDemangle"
 )
 
 set_target_properties(LLVMSupport PROPERTIES
@@ -38,7 +38,7 @@ set_target_properties(LLVMSupport PROPERTIES
 add_library(LLVMCore STATIC IMPORTED)
 
 set_target_properties(LLVMCore PROPERTIES
-    INTERFACE_LINK_LIBRARIES_DEBUG "LLVMBinaryFormat;LLVMSupport"
+    INTERFACE_LINK_LIBRARIES "LLVMBinaryFormat;LLVMSupport"
 )
 
 set_target_properties(LLVMCore PROPERTIES
@@ -49,7 +49,7 @@ set_target_properties(LLVMCore PROPERTIES
 add_library(LLVMBinaryFormat STATIC IMPORTED)
 
 set_target_properties(LLVMBinaryFormat PROPERTIES
-    INTERFACE_LINK_LIBRARIES_DEBUG "LLVMSupport"
+    INTERFACE_LINK_LIBRARIES "LLVMSupport"
 )
 
 set_target_properties(LLVMBinaryFormat PROPERTIES
@@ -60,7 +60,7 @@ set_target_properties(LLVMBinaryFormat PROPERTIES
 add_library(LLVMBitReader STATIC IMPORTED)
 
 set_target_properties(LLVMBitReader PROPERTIES
-    INTERFACE_LINK_LIBRARIES_DEBUG "LLVMCore;LLVMSupport"
+    INTERFACE_LINK_LIBRARIES "LLVMCore;LLVMSupport"
 )
 
 set_target_properties(LLVMBitReader PROPERTIES
@@ -82,8 +82,5 @@ target_include_directories(llvmhello
 
 target_link_libraries(llvmhello
     PRIVATE
-        LLVMSupport
-        LLVMCore
-        LLVMBinaryFormat
         LLVMBitReader
 )
