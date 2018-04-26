@@ -45,3 +45,17 @@ target_link_libraries(diagnostics-c
         libclang
         LLVMCore
 )
+
+# Exploit the libclang C interface
+add_executable(lexer-c)
+
+target_sources(lexer-c
+    PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/lexer-c.cpp"
+)
+
+target_link_libraries(lexer-c
+    PRIVATE
+        libclang
+        LLVMCore
+)
