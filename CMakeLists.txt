@@ -3,4 +3,4 @@ message(STATUS "Starting with CMake version ${CMAKE_VERSION}")
 project(llvm-experiments VERSION 1.0 LANGUAGES C CXX)
 
 add_subdirectory(llvm-first-step)
-add_subdirectory(llvm-front-clang-diagnostic)
+add_subdirectory(llvm-front-clang-demo)

@@ -1,4 +1,4 @@
-#include "config/diagnostic-config.h"
+#include "config/global-config.h"
 
 extern "C" {
 #include "clang-c/Index.h"

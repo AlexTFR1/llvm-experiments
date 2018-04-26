@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.11)
 message(STATUS "Starting with CMake version ${CMAKE_VERSION}")
-project(llvm-first-step VERSION 1.0 LANGUAGES C CXX)
+project(llvm-front-clang-demo VERSION 1.0 LANGUAGES C CXX)
 message(STATUS "Configure project: ${CMAKE_PROJECT_NAME}")
 
 set(CMAKE_CXX_STANDARD 11)
@@ -21,8 +21,8 @@ include(${LLVM_INSTALL_PREFIX}/lib/cmake/llvm/LLVMConfig.cmake)
 
 # Configure the build
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/config/diagnostic-config.h.cmake
-    ${CMAKE_CURRENT_BINARY_DIR}/include/config/diagnostic-config.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/config/global-config.h.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/include/config/global-config.h
 )
 
 # Let all targets use LLVM's headers
