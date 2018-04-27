@@ -59,3 +59,18 @@ target_link_libraries(lexer-c
         libclang
         LLVMCore
 )
+
+# Exploit the libclang C interface
+add_executable(declared-methods-c)
+
+target_sources(declared-methods-c
+    PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/declared-methods-c.cpp"
+)
+
+target_link_libraries(declared-methods-c
+    PRIVATE
+        libclang
+        LLVMCore
+)
+
