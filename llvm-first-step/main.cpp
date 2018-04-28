@@ -1,4 +1,3 @@
-/*#include "llvm/Bitcode/ReaderWriter.h"*/
 #include "llvm/Bitcode/BitcodeReader.h"
 #include "llvm/IR/Function.h"
 #include "llvm/IR/Module.h"
@@ -7,7 +6,6 @@
 #include "llvm/Support/ErrorOr.h"
 #include "llvm/Support/MemoryBuffer.h"
 #include "llvm/Support/raw_os_ostream.h"
-/*#include "llvm/Support/system_error.h"*/
 #include <iostream>
 
 using namespace llvm;
