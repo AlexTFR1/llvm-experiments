@@ -7,4 +7,5 @@ using namespace llvm;
 /// library.
 void llvm::initializeLLVMExperimentPasses(PassRegistry &Registry) {
     initializeFunctionArgumentCountPass(Registry);
+    initializeFunctionArgumentUsagePassPass(Registry);
 }
