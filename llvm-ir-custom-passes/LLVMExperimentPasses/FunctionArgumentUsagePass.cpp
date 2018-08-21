@@ -153,7 +153,7 @@ bool FunctionArgumentUsagePass::runOnFunction(Function &F) {
 }
 
 void FunctionArgumentUsagePass::print(llvm::raw_ostream &O, const Module *M) const {
-    for (TypeMismatch mismatch : typeMismatches) {
+    for (auto& mismatch : typeMismatches) {
         O << "Function '";
         O.write_escaped(mismatch.functionName);
         O << "'";
