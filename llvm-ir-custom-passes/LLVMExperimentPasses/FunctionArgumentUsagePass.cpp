@@ -1,3 +1,4 @@
+#include "llvm/ADT/SmallVector.h"
 #include "llvm/Pass.h"
 #include "llvm/IR/Argument.h"
 #include "llvm/IR/Function.h"
@@ -6,7 +7,6 @@
 #include "llvm/IR/Type.h"
 #include "llvm/Support/Debug.h"
 #include "llvm/Support/raw_ostream.h"
-#include <vector>
 
 #define DEBUG_TYPE "ArgUsage"
 
@@ -15,7 +15,7 @@ using namespace llvm;
 namespace {
     class FunctionArgumentUsagePass
             : public FunctionPass {
-        private:
+        public:
             struct TypeMismatchRecord {
                 const StringRef functionName;
                 const unsigned line;
@@ -40,11 +40,14 @@ namespace {
             };
             using TypeMismatch = struct TypeMismatchRecord;
 
-            std::vector<TypeMismatch> typeMismatches;
+        private:
+            using TypeMismatchVector = SmallVector<TypeMismatch, 32>;
+            TypeMismatchVector typeMismatches;
 
             template<typename CallInst>
             void analyzeFunctionUsages(Function &F, CallInst *call);
         public:
+            using const_iterator = TypeMismatchVector::const_iterator;
             static char ID;
             FunctionArgumentUsagePass() :
                 FunctionPass(ID) {
@@ -52,6 +55,14 @@ namespace {
 
             virtual void getAnalysisUsage(AnalysisUsage &AU) const {
                 AU.setPreservesAll();
+            }
+
+            virtual const_iterator begin() const {
+                return typeMismatches.begin();
+            }
+
+            virtual const_iterator end() const {
+                return typeMismatches.end();
             }
 
             virtual bool runOnFunction(Function &F);
@@ -118,8 +129,8 @@ void FunctionArgumentUsagePass::analyzeFunctionUsages(Function &F, CallInst *cal
         if (ftypeptr->getTypeID() != phtypeptr->getTypeID()) {
             // type mismatch is here
             // ... register it:
-            typeMismatches.push_back(TypeMismatch(F.getName(), line, hasLine,
-                    fa->getArgNo(), ftypeptr, phtypeptr));
+            typeMismatches.emplace_back(F.getName(), line, hasLine,
+                    fa->getArgNo(), ftypeptr, phtypeptr);
             // ... and debug:
             LLVM_DEBUG(dbgs() << "\ttype mismatch: expected '");
             LLVM_DEBUG(dbgs() << *ftypeptr <<"' but argument is of type '");
@@ -158,5 +169,6 @@ void FunctionArgumentUsagePass::print(llvm::raw_ostream &O, const Module *M) con
 
 void FunctionArgumentUsagePass::releaseMemory() {
     LLVM_DEBUG(dbgs() << "Release memory" << '\n');
+    // TODO reclaim memory, different functions have different number of users
     typeMismatches.clear();
 }
