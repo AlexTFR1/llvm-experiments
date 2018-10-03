@@ -1,4 +1,5 @@
 #include "llvm/ADT/SmallVector.h"
+#include "llvm/ADT/Statistic.h"
 #include "llvm/Pass.h"
 #include "llvm/IR/Argument.h"
 #include "llvm/IR/Function.h"
@@ -9,6 +10,7 @@
 #include "llvm/Support/raw_ostream.h"
 
 #define DEBUG_TYPE "ArgUsage"
+STATISTIC(NumOfMismatches, "Number of type mismatches are found");
 
 using namespace llvm;
 
@@ -129,6 +131,7 @@ void FunctionArgumentUsagePass::analyzeFunctionUsages(Function &F, CallInst *cal
         if (ftypeptr->getTypeID() != phtypeptr->getTypeID()) {
             // type mismatch is here
             // ... register it:
+            NumOfMismatches++;
             typeMismatches.emplace_back(F.getName(), line, hasLine,
                     fa->getArgNo(), ftypeptr, phtypeptr);
             // ... and debug:
