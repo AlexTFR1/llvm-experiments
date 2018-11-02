@@ -1,0 +1,47 @@
+diff --git a/lib/Target/X86/CMakeLists.txt b/lib/Target/X86/CMakeLists.txt
+index 5ded1f971a0..21989b24f1a 100644
+--- a/lib/Target/X86/CMakeLists.txt
++++ b/lib/Target/X86/CMakeLists.txt
+@@ -22,6 +22,7 @@ endif()
+ add_public_tablegen_target(X86CommonTableGen)
+ 
+ set(sources
++  CountInstructionsPass.cpp
+   ShadowCallStack.cpp
+   X86AsmPrinter.cpp
+   X86CallFrameOptimization.cpp
+diff --git a/lib/Target/X86/X86.h b/lib/Target/X86/X86.h
+index d5405703fdf..2a5663b0fc1 100644
+--- a/lib/Target/X86/X86.h
++++ b/lib/Target/X86/X86.h
+@@ -132,6 +132,10 @@ void initializeEvexToVexInstPassPass(PassRegistry &);
+ 
+ FunctionPass *createX86SpeculativeLoadHardeningPass();
+ 
++// from LLVMExperimentMachinePasses
++void initializeCountInstructionsPassPass(PassRegistry &);
++FunctionPass *createCountInstructionsPass();
++
+ } // End llvm namespace
+ 
+ #endif
+diff --git a/lib/Target/X86/X86TargetMachine.cpp b/lib/Target/X86/X86TargetMachine.cpp
+index 3583a9cfb8d..427da6cb688 100644
+--- a/lib/Target/X86/X86TargetMachine.cpp
++++ b/lib/Target/X86/X86TargetMachine.cpp
+@@ -93,6 +93,7 @@ extern "C" void LLVMInitializeX86Target() {
+   initializeX86AvoidSFBPassPass(PR);
+   initializeX86SpeculativeLoadHardeningPassPass(PR);
+   initializeX86FlagsCopyLoweringPassPass(PR);
++  initializeCountInstructionsPassPass(PR);
+ }
+ 
+ static std::unique_ptr<TargetLoweringObjectFile> createTLOF(const Triple &TT) {
+@@ -512,6 +513,7 @@ void X86PassConfig::addPreEmitPass() {
+     addPass(createX86FixupLEAs());
+     addPass(createX86EvexToVexInsts());
+   }
++  addPass(createCountInstructionsPass());
+ }
+ 
+ void X86PassConfig::addPreEmitPass2() {

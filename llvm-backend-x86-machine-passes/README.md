@@ -4,7 +4,7 @@ There is no dynamic linking on Windows (this is OS weirdness), so we cannot use 
 
 To build the pass, do the following:
 
- 1. copy all files from this directory except `README.md` into the `lib/Target/X86` one. Here and throughout, all paths
+ 1. copy all files from this directory except `README.md` and `patches` into the `lib/Target/X86` one. Here and throughout, all paths
     are given at the root of the LLVM source directory.
 
  2. add the names of the copied files just after `set(sources` line line into `lib/Target/X86/CMakeLists.txt`:
@@ -62,6 +62,15 @@ To build the pass, do the following:
       addPass(createCountInstructionsPass());
     }
     ```
+
+ P.S. Points 2 - 5 can be automated using the following command (it is applicable only if you are using an LLVM Git repo):
+
+ ```bash
+ git apply <PATH_TO_YOUR_LLVM_EXPERIMENTS_COPY>/llvm-backend-x86-machine-passes/patches/register-x86-machine-passes.patch
+ ```
+
+ The command must be executed from the **LLVM** Git repo, not **LLVM Experiments**.
+
 
  6. rebuild LLVM (`YOUR_LLVM_BUILDTREE` is the directory where you build LLVM) and install the new output files:
 
