@@ -88,7 +88,7 @@ To build the pass, do the following:
      using the following command line:
 
      ```bash
-     llc.exe -march=x86 sum-o1.bc -debug-pass=Structure -debug-only=mcount --x86-asm-syntax=intel
+     llc.exe -march=x86-64 sum-o1.bc -debug-pass=Structure -debug-only=mcount --x86-asm-syntax=intel
      ```
 
      The output:
@@ -100,6 +100,17 @@ To build the pass, do the following:
            Machine Count Pass
            X86 Assembly Printer
            Free MachineFunction
-     mcount: function 'sum' has 3 instructions.
-     mcount: function 'min' has 5 instructions.
+     Function 'main' consists of the following instructions:
+        'SEH_Epilogue': 1
+        'SUB64ri8': 1
+        'SEH_StackAlloc': 1
+        'ADD64ri8': 1
+        'MOVSDmr': 1
+        'MOVSDrm': 2
+        'CALL64pcrel32': 1
+        'MOV32mi': 1
+        'RETQ': 1
+        'CVTTSD2SIrm': 1
+        'SEH_EndPrologue': 1
+     total: 12
      ```
