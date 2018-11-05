@@ -50,6 +50,14 @@ To build the pass, do the following:
     // supported.
     ```
 
+ P.S. Points 2 - 5 can be automated using the following command (it is applicable only if you are using an LLVM Git repo):
+
+ ```bash
+ git apply <PATH_TO_YOUR_LLVM_EXPERIMENTS_COPY>/llvm-ir-custom-passes/patches/register-experiment-passes.patch
+ ```
+
+ The command must be executed from the **LLVM** Git repo, not **LLVM Experiments**.
+
  6. rebuild LLVM (`YOUR_LLVM_BUILDTREE` is the directory where you build LLVM) and install the new output files:
 
     ```bash

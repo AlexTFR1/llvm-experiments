@@ -1,0 +1,48 @@
+diff --git a/include/llvm/InitializePasses.h b/include/llvm/InitializePasses.h
+index 1a9c6f82bfd..e58ef1b2c98 100644
+--- a/include/llvm/InitializePasses.h
++++ b/include/llvm/InitializePasses.h
+@@ -402,6 +402,10 @@ void initializeWinEHPreparePass(PassRegistry&);
+ void initializeWriteBitcodePassPass(PassRegistry&);
+ void initializeWriteThinLTOBitcodePass(PassRegistry&);
+ void initializeXRayInstrumentationPass(PassRegistry&);
++// my experiment passes
++void initializeLLVMExperimentPasses(PassRegistry &);
++void initializeFunctionArgumentCountPass(PassRegistry &);
++void initializeFunctionArgumentUsagePassPass(PassRegistry &);
+ 
+ } // end namespace llvm
+ 
+diff --git a/lib/Transforms/CMakeLists.txt b/lib/Transforms/CMakeLists.txt
+index 74db9e53304..8d924f16f2a 100644
+--- a/lib/Transforms/CMakeLists.txt
++++ b/lib/Transforms/CMakeLists.txt
+@@ -8,3 +8,4 @@ add_subdirectory(Vectorize)
+ add_subdirectory(Hello)
+ add_subdirectory(ObjCARC)
+ add_subdirectory(Coroutines)
++add_subdirectory(LLVMExperimentPasses)
+diff --git a/tools/opt/CMakeLists.txt b/tools/opt/CMakeLists.txt
+index f03d1151665..7e966f8e8cf 100644
+--- a/tools/opt/CMakeLists.txt
++++ b/tools/opt/CMakeLists.txt
+@@ -18,6 +18,7 @@ set(LLVM_LINK_COMPONENTS
+   TransformUtils
+   Vectorize
+   Passes
++  ExperimentPasses
+   )
+ 
+ # Support plugins.
+diff --git a/tools/opt/opt.cpp b/tools/opt/opt.cpp
+index 6e287b6c0ab..2b458e1faa5 100644
+--- a/tools/opt/opt.cpp
++++ b/tools/opt/opt.cpp
+@@ -449,6 +449,7 @@ int main(int argc, char **argv) {
+   initializeAggressiveInstCombine(Registry);
+   initializeInstrumentation(Registry);
+   initializeTarget(Registry);
++  initializeLLVMExperimentPasses(Registry);
+   // For codegen passes, only passes that do IR to IR transformation are
+   // supported.
+   initializeExpandMemCmpPassPass(Registry);
