@@ -82,18 +82,16 @@ INITIALIZE_PASS(FunctionArgumentUsagePass, "fnargusage", "Function Argument Usag
         false /* Analysis Pass */);
 
 static void dumpFunctionArgs(const Function &F) {
-    if (isCurrentDebugType(DEBUG_TYPE)) {
-        LLVM_DEBUG(dbgs() << "function '");
-        LLVM_DEBUG(dbgs().write_escaped(F.getName()));
-        LLVM_DEBUG(dbgs() << "' takes " << F.arg_size() << " parameters:\n");
-        for (auto a = F.arg_begin(), e = F.arg_end(); a != e; ++a) {
-            if (a->hasName()) {
-                LLVM_DEBUG(dbgs() << '\t' << a->getName());
-            } else {
-                LLVM_DEBUG(dbgs() << "\tanonymous");
-            }
-            LLVM_DEBUG(dbgs() << ": " << *a->getType() << '\n');
+    dbgs() << "function '";
+    dbgs().write_escaped(F.getName());
+    dbgs() << "' takes " << F.arg_size() << " parameters:\n";
+    for (auto a = F.arg_begin(), e = F.arg_end(); a != e; ++a) {
+        if (a->hasName()) {
+            dbgs() << '\t' << a->getName();
+        } else {
+            dbgs() << "\tanonymous";
         }
+        dbgs() << ": " << *a->getType() << '\n';
     }
 }
 
@@ -101,16 +99,17 @@ template<typename CallInst>
 void FunctionArgumentUsagePass::analyzeFunctionUsages(Function &F, CallInst *call) {
     bool hasLine = false;
     unsigned line = 0;
-    LLVM_DEBUG(dbgs() << "and is used in the '");
-    LLVM_DEBUG(dbgs().write_escaped(call->getParent()->getParent()->getName()));
-    LLVM_DEBUG(dbgs() << "' function");
-    if (auto& debugLoc = call->getDebugLoc()) {
-        line = call->getDebugLoc().getLine();
-        hasLine = true;
-        LLVM_DEBUG(dbgs() << " (on line: " << line << ')');
-    }
-    LLVM_DEBUG(dbgs() << ":\n");
-
+    LLVM_DEBUG({
+        dbgs() << "and is used in the '";
+        dbgs().write_escaped(call->getParent()->getParent()->getName());
+        dbgs() << "' function";
+        if (auto &debugLoc = call->getDebugLoc()) {
+            line = call->getDebugLoc().getLine();
+            hasLine = true;
+            dbgs() << " (on line: " << line << ')';
+        }
+        dbgs() << ":\n";
+    });
     // check on argument type mismatch
     //   fa - a function's formal argument (an argument from
     //        the signature of the function).
@@ -122,28 +121,31 @@ void FunctionArgumentUsagePass::analyzeFunctionUsages(Function &F, CallInst *cal
         const Type *ftypeptr = fa->getType();
         const Type *phtypeptr = pha->get()->getType();
 
-        LLVM_DEBUG(dbgs() << "\targ #" << fa->getArgNo());
-        if (pha->get()->hasName()) {
-            LLVM_DEBUG(dbgs() << '(' << pha->get()->getName() << ')');
-        }
-        LLVM_DEBUG(dbgs() << ": " << *phtypeptr << '\n');
-
+        LLVM_DEBUG({
+            dbgs() << "\targ #" << fa->getArgNo();
+            if (pha->get()->hasName()) {
+                dbgs() << '(' << pha->get()->getName() << ')';
+            }
+            dbgs() << ": " << *phtypeptr << '\n';
+        });
         if (ftypeptr->getTypeID() != phtypeptr->getTypeID()) {
             // type mismatch is here
             // ... register it:
             NumOfMismatches++;
             typeMismatches.emplace_back(F.getName(), line, hasLine,
                     fa->getArgNo(), ftypeptr, phtypeptr);
-            // ... and debug:
-            LLVM_DEBUG(dbgs() << "\ttype mismatch: expected '");
-            LLVM_DEBUG(dbgs() << *ftypeptr <<"' but argument is of type '");
-            LLVM_DEBUG(dbgs() << *phtypeptr << "'\n");
+            LLVM_DEBUG({
+                // ... and debug:
+                dbgs() << "\ttype mismatch: expected '";
+                dbgs() << *ftypeptr <<"' but argument is of type '";
+                dbgs() << *phtypeptr << "'\n";
+            });
         }
     }
 }
 
 bool FunctionArgumentUsagePass::runOnFunction(Function &F) {
-    dumpFunctionArgs(F);
+    LLVM_DEBUG(dumpFunctionArgs(F));
 
     for (auto use = F.use_begin(), e = F.use_end(); use != e; ++use) {
         if (CallInst *call = dyn_cast<CallInst>(use->getUser())) {
