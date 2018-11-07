@@ -8,9 +8,14 @@
 #include "llvm/Support/raw_ostream.h"
 
 #define DEBUG_TYPE "mcount"
-#define DEFAULT_UNIQUE_INSTRUCTIONS 16 // TODO convert to a cl argument
 
 using namespace llvm;
+
+static cl::opt<unsigned> AverageUniqueInstructions(
+    "avg-unique-instrs", cl::Hidden,
+    cl::desc("Average number of unique instructions in a function "
+             "under analysis"),
+    cl::init(16));
 
 namespace {
     class CountInstructionsPass : public MachineFunctionPass {
@@ -19,9 +24,10 @@ namespace {
 
             static char ID;
 
-            CountInstructionsPass() : MachineFunctionPass(ID),
-                                      UniqueInstructionCounts(UniqueInstructionMap(DEFAULT_UNIQUE_INSTRUCTIONS)),
-                                      TTI(nullptr) { }
+            CountInstructionsPass() :
+                MachineFunctionPass(ID),
+                UniqueInstructionCounts(UniqueInstructionMap(AverageUniqueInstructions)),
+                TTI(nullptr) { }
 
             virtual bool runOnMachineFunction(MachineFunction &MF) override {
                 TTI = MF.getSubtarget().getInstrInfo();
