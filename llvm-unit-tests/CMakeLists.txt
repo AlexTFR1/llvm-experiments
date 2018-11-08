@@ -74,4 +74,20 @@ target_link_libraries(simple-generator-test
 		LLVMAnalysis
 )
 
+# Test for llvm-ir-tests (see ../llvm-ir-tests)
+add_executable(llvm-ir-tests)
+
+target_sources(llvm-ir-tests
+	PRIVATE
+		"${CMAKE_CURRENT_SOURCE_DIR}/../llvm-ir-tests/binarysearch.c"
+		"${CMAKE_CURRENT_SOURCE_DIR}/binarysearch-test.cpp"
+)
+
+target_link_libraries(llvm-ir-tests
+	PRIVATE
+		gtest
+		gtest_main
+)
+
 add_test(NAME simple-generator-test COMMAND simple-generator-test)
+add_test(NAME llvm-ir-tests COMMAND llvm-ir-tests)
